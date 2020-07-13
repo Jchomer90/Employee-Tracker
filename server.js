@@ -5,14 +5,11 @@ const inquirer = require("inquirer");
 const path = require("path");
 const app = express();
 
+var db = require("./db/index")
+
 require("dotenv").config();
 
-let connection = mysql.createConnection({
-    host: "localhost",
-    port: 3000,
-    password: process.env.DB_PASS,
-    database: "employee_tracker_db"
-})
+
 function init() {
 inquirer
     .prompt([
@@ -68,9 +65,7 @@ function viewEmployeesDept() {
 };
 
 function viewAllEmployees() {
-    inquirer.prompt([
-
-    ])
+    console.table(db.viewAllEmployees());
 };
 
 function viewEmployeesDept() {
@@ -103,7 +98,11 @@ function addEmployee() {
             message: "What is your employee's role?",
             // choices: ["Sales Lead", "Salesperson", "Lead Engineer", "Software Engineer", "Account Manager", "Accountant", "Legal Team Lead"]
         }
-    ])
+    ]).then(function(employee){
+        db.createEmployee([employee.addEmployeeFirst])
+        connection.query("INSERT INTO employees VALUES(?)",[employee.addEmployeeFirst, employee.addEmployeeLast])
+
+    })
 };
 
 function viewEmployeeRoles() {
@@ -123,3 +122,4 @@ function updateEmployeesRole() {
     ])
 };
 
+init();
